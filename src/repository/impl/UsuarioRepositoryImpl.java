@@ -1,0 +1,70 @@
+package repository.impl;
+
+import model.Usuario;
+import repository.UsuarioRepository;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class UsuarioRepositoryImpl implements UsuarioRepository {
+    private List<Usuario> usuarios;
+
+    public List<Usuario> getUsuarios() {
+        return usuarios;
+    }
+
+    public UsuarioRepositoryImpl() {
+        this.usuarios = new ArrayList<>();
+    }
+
+    public UsuarioRepositoryImpl(List<Usuario> usuarios) {
+        this.usuarios = usuarios;
+    }
+
+    @Override
+    public void guardar(Usuario usuario) {
+        usuarios.add(usuario);
+    }
+    @Override
+    public Usuario buscarPorUsername(
+            String username
+    ) {
+
+        for (Usuario usuario : usuarios) {
+
+            if (usuario.getUsername()
+                    .equals(username)) {
+
+                return usuario;
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public List<Usuario> listar() {
+
+        if (usuarios.isEmpty()) {
+            System.out.println("ERROR: No existen usuarios registrados.");
+            return usuarios;
+        }
+
+        System.out.println("\n==============================================================");
+        System.out.printf("| %-20s | %-15s |%n",
+                "USERNAME",
+                "ROL");
+        System.out.println("==============================================================");
+
+        for (Usuario usuario : usuarios) {
+
+            System.out.printf("| %-20s | %-15s |%n",
+                    usuario.getUsername(),
+                    usuario.getRol());
+        }
+
+        System.out.println("==============================================================");
+
+        return usuarios;
+    }
+}
