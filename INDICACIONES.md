@@ -105,7 +105,15 @@ Cada vez que quieras empezar a trabajar (Ojala que trabajasen malditos putos) ti
 git pull
 ```
 
-Esto descarga los cambios más recientes de la rama remota, es decir estas actualizao.
+Esto descarga los cambios más recientes de la rama remota, es decir estas actualizao, pero solo en tu rama.
+
+> Si ves cambios en la rama principal (main) que no tienes, ejecuta esto siempre, antes de programar y despues del pull:
+
+```bash
+git merge main
+```
+
+Esto hace que los cambios más actuales del main se descarguen en tu rama, asegurate de estar en tu rama tambien.
 
 ---
 
