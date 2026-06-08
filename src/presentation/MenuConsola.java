@@ -349,6 +349,4 @@ public class MenuConsola {
                 "Pedido generado."
         );
     }
-
-
 }
