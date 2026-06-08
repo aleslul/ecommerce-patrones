@@ -1,5 +1,11 @@
 import model.Usuario;
 import model.types.UsuarioRoles;
+import patrones.facade.SeguridadFacade;
+import patrones.proxy.InventarioManager;
+import patrones.proxy.InventarioProxy;
+import presentation.AdminMenu;
+import presentation.ClienteMenu;
+import presentation.LoginMenu;
 import presentation.MenuConsola;
 import repository.PedidoRepository;
 import repository.ProductoRepository;
@@ -9,6 +15,8 @@ import repository.impl.ProductoRepositoryImpl;
 import repository.impl.UsuarioRepositoryImpl;
 import service.*;
 
+import java.util.Scanner;
+
 public class Main {
 
     /*
@@ -17,28 +25,28 @@ public class Main {
     * y que las usaremos los tres,
     *
     * */
-
     public static void main(String[] args) {
+        //REPOSITORIS
         ProductoRepository productoRepository = new ProductoRepositoryImpl();
         PedidoRepository pedidoRepository = new PedidoRepositoryImpl();
         UsuarioRepository usuarioRepository = new UsuarioRepositoryImpl();
 
-        // AÑADIDO: Tu repositorio simulado (la base de datos para los pagos)
-        PagoRepository pagoRepository = new PagoRepositoryImpl();
+        //SERVICES
 
-        // SERVICES
-        // Arreglé el orden aquí: InventarioService debe crearse ANTES que PedidoService para poder pasárselo
-        InventarioService inventarioService = new InventarioService(productoRepository);
-        PedidoService pedidoService = new PedidoService(pedidoRepository, inventarioService);
+        InventarioService inventarioReal = new InventarioService(productoRepository);
+        InventarioManager inventarioProxy = new InventarioProxy(inventarioReal);
 
         ProductoService productoService = new ProductoService(productoRepository);
         UsuarioService usuarioService = new UsuarioService(usuarioRepository);
-        CarritoService carritoService = new CarritoService();
+        SeguridadFacade seguridadFacade = new SeguridadFacade(usuarioService);
+        //USANDO INVENTARIOSERVICE:
+        PedidoService pedidoService = new PedidoService(pedidoRepository, inventarioReal);
 
-        // AÑADIDO: Tu servicio de pagos que controla la lógica
-        PagoService pagoService = new PagoService(pagoRepository);
+        //USANDO PROXY:
+        CarritoService carritoService = new CarritoService(inventarioProxy);
 
-        // DATOS INICIALES
+        Scanner scanner = new Scanner(System.in);
+        //DATOS INICIALES
         usuarioService.registrarUsuario(
                 new Usuario(
                         "admin",
@@ -47,14 +55,45 @@ public class Main {
                 )
         );
 
-        // MENU
-        MenuConsola menu = new MenuConsola(
-                productoService,
-                usuarioService,
-                carritoService,
-                pedidoService,
-                pagoService // AÑADIDO: ¡El 5to parámetro que pedía la consola para que no marque rojo!
+        usuarioService.registrarUsuario(
+                new Usuario(
+                        "cliente",
+                        "1234",
+                        UsuarioRoles.CLIENTE
+                )
         );
-        menu.iniciar();
+
+
+        LoginMenu loginMenu =
+                new LoginMenu(
+                        scanner,
+                        seguridadFacade
+                );
+
+        ClienteMenu clienteMenu =
+                new ClienteMenu(
+                        scanner,
+                        productoService,
+                        carritoService,
+                        pedidoService,
+                        seguridadFacade
+                );
+
+        AdminMenu adminMenu =
+                new AdminMenu(
+                        scanner,
+                        productoService,
+                        usuarioService,
+                        inventarioProxy
+                );
+
+        MenuConsola menuConsola =
+                new MenuConsola(
+                        loginMenu,
+                        clienteMenu,
+                        adminMenu
+                );
+
+        menuConsola.iniciar();
     }
 }

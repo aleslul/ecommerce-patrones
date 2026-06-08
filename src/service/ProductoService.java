@@ -13,16 +13,17 @@ public class ProductoService {
     }
 
     //FUNCIONES
-    public void registrarProducto(Producto producto) {
+    public boolean registrarProducto(Producto producto) {
         if (producto == null) {
             System.out.println("ERROR: Producto invalido");
-            return;
+            return false;
         }
         if (repository.buscarPorCodigo(producto.getCodigo()) != null) {
             System.out.println("ERROR: Ya existe un producto con ese codigo");
-            return;
+            return false;
         }
         repository.guardar(producto);
+        return true;
     }
 
     public Producto buscarProducto(String codigo) {
