@@ -40,7 +40,7 @@ public class AdminMenu {
             System.out.println("""
                 
                 ============================
-                     E-COMMERCE
+                     E-COMMERCE (ADMIN)
                 ============================
                 
                 1. Productos
@@ -64,7 +64,7 @@ public class AdminMenu {
 
                 case 3 -> menuPagos();
 
-                case 4 -> System.out.println("FUNCION NO IMPLEMENTADA");
+                case 4 -> System.out.println("FUNCION NO IMPLEMENTADA"); //TODO: IMPLEMENTAR REPORTES
 
                 case 5 -> {
                     seguridadFacade.cerrarSesion();
@@ -79,6 +79,7 @@ public class AdminMenu {
         } while (opcion != 0);
     }
 
+    /* TODO: ELIMINAR FUNCION (?)
     private boolean iniciarSesion() {
         System.out.println("==== INICIO DE SESIÓN ====");
         System.out.print("Username: ");
@@ -92,7 +93,7 @@ public class AdminMenu {
         }
         System.out.println("Bienvenido " + username);
         return true;
-    }
+    }*/
 
     private void menuProductos() {
 
@@ -162,9 +163,9 @@ public class AdminMenu {
         producto.setStock(stock);
         producto.setCategoria(categoria);
 
-        productoService.registrarProducto(producto);
-
-        System.out.println("Producto registrado.");
+        if (productoService.registrarProducto(producto)){
+            System.out.println("Producto registrado.");
+        }
     }
 
     private void buscarProducto() {
@@ -265,8 +266,6 @@ public class AdminMenu {
         }
     }
 
-    //TODO: REVISAR USUARIOS
-    //TODO: REALIZAR UNA FUNCION QUE PERMITA MODIFICAR USUARIOS EN USUARIO SERVICE
     private void menuUsuarios() {
 
         int opcion;
@@ -279,6 +278,7 @@ public class AdminMenu {
                 
                 1. Registrar usuario
                 2. Listar usuarios
+                3. Modificar usuario
                 0. Volver
                 
                 """);
@@ -292,6 +292,7 @@ public class AdminMenu {
 
                 case 2 -> usuarioService.listarUsuarios();
 
+                case 3 -> modificarUsuario();
             }
 
         } while (opcion != 0);
@@ -319,6 +320,26 @@ public class AdminMenu {
         System.out.println(
                 "Usuario registrado."
         );
+    }
+
+    private void modificarUsuario() {
+
+        System.out.print("Username a buscar: ");
+        String username = scanner.nextLine();
+
+        System.out.print("Nuevo nombre: ");
+        String nombre = scanner.nextLine();
+
+        System.out.print("Nueva contraseña: ");
+        String password = scanner.nextLine();
+
+        boolean resultado = usuarioService.modificarUsuario(username, nombre, password);
+
+        if (resultado) {
+            System.out.println("Usuario modificado correctamente");
+        } else {
+            System.out.println("ERROR: Usuario no encontrado");
+        }
     }
 
     private void menuPagos() {

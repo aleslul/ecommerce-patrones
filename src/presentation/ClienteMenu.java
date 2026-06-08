@@ -256,6 +256,7 @@ public class ClienteMenu {
                 
                 1. Generar pedido
                 2. Ver pedidos
+                3. Ver detalle de pedido
                 0. Volver
                 
                 """);
@@ -268,28 +269,30 @@ public class ClienteMenu {
                 case 1 -> generarPedido();
 
                 case 2 -> pedidoService.listarPedidos();
+
+                case 3 -> verDetallePedido();
             }
 
         } while (opcion != 0);
     }
 
-    //TODO: Actualizar esto despues con patrones.builder
+    private void verDetallePedido() {
+        System.out.println("Codigo del pedido: ");
+        String codigo = scanner.nextLine();
+        pedidoService.mostrarDetallePedido(codigo);
+    }
+
+    //TODO: Actualizar esto despues con patrones builder
     private void generarPedido() {
-        Pedido pedido =
-                pedidoService.crearPedido(
-                        carritoService.obtenerCarrito()
-                );
+        Pedido pedido = pedidoService.crearPedido(carritoService.obtenerCarrito());
 
         if (pedido != null) {
-
             carritoService.vaciarCarrito();
-
-            System.out.println(
-                    "Pedido generado correctamente."
-            );
+            System.out.println("Pedido generado correctamente.");
         }
     }
 
+    //TODO: IMPLEMENTAR FUNCIONES DE PAGOS
     private void menuPagos() {
 
         int opcion;

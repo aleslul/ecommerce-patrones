@@ -25,13 +25,19 @@ public class Main {
         UsuarioRepository usuarioRepository = new UsuarioRepositoryImpl();
 
         //SERVICES
-        InventarioManager inventarioService = new InventarioProxy(new InventarioService(productoRepository));
 
-        PedidoService pedidoService = new PedidoService(pedidoRepository, inventarioService);
+        InventarioService inventarioReal = new InventarioService(productoRepository);
+        InventarioManager inventarioProxy = new InventarioProxy(inventarioReal);
+
         ProductoService productoService = new ProductoService(productoRepository);
         UsuarioService usuarioService = new UsuarioService(usuarioRepository);
-        CarritoService carritoService = new CarritoService(inventarioService);
         SeguridadFacade seguridadFacade = new SeguridadFacade(usuarioService);
+        //USANDO INVENTARIOSERVICE:
+        PedidoService pedidoService = new PedidoService(pedidoRepository, inventarioReal);
+
+        //USANDO PROXY:
+        CarritoService carritoService = new CarritoService(inventarioProxy);
+
         Scanner scanner = new Scanner(System.in);
         //DATOS INICIALES
         usuarioService.registrarUsuario(
@@ -71,7 +77,7 @@ public class Main {
                         scanner,
                         productoService,
                         usuarioService,
-                        inventarioService
+                        inventarioProxy
                 );
 
         MenuConsola menuConsola =
@@ -82,6 +88,5 @@ public class Main {
                 );
 
         menuConsola.iniciar();
-
     }
 }

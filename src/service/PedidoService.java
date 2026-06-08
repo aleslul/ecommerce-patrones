@@ -14,16 +14,11 @@ public class PedidoService {
     private PedidoRepository repository;
     private InventarioManager inventarioService;
 
-
-
     public PedidoService(PedidoRepository repository, InventarioManager inventarioService) {
         this.repository = repository;
         this.inventarioService = inventarioService;
     }
 
-    //FUNCIONES
-
-    //TODO: ASEGURARSE QUE SE IMPRIMAN LA CANTIDAD TOTAL DE PRODUCTOS Y NO LOS TIPOS DE PRODUCTOS QUE SE LLEVEN
     public Pedido crearPedido(Carrito carrito) {
 
         if (carrito == null || carrito.getItems().isEmpty()) {
@@ -71,5 +66,43 @@ public class PedidoService {
         }
 
         return pedidos;
+    }
+
+    public Pedido buscarPedido(String codigo) {
+        return repository.buscarPedidoPorCodigo(codigo);
+    }
+
+    public void mostrarDetallePedido(String codigo) {
+
+        Pedido pedido = repository.buscarPedidoPorCodigo(codigo);
+
+        if (pedido == null) {
+            System.out.println("ERROR: Pedido no encontrado");
+            return;
+        }
+
+        System.out.println("\n==================================================");
+        System.out.println("PEDIDO: " + pedido.getCodigo());
+        System.out.println("ESTADO: " + pedido.getEstado());
+        System.out.printf("TOTAL: S/. %.2f%n", pedido.getTotal());
+
+        System.out.println("\nPRODUCTOS:");
+
+        System.out.printf("| %-10s | %-25s | %-10s |%n",
+                "CODIGO",
+                "PRODUCTO",
+                "CANTIDAD");
+
+        System.out.println("--------------------------------------------------------------");
+
+        for (ItemCarrito item : pedido.getItems()) {
+
+            System.out.printf("| %-10s | %-25s | %-10d |%n",
+                    item.getProducto().getCodigo(),
+                    item.getProducto().getNombre(),
+                    item.getCantidad());
+        }
+
+        System.out.println("==================================================");
     }
 }

@@ -8,8 +8,6 @@ import repository.ProductoRepository;
 import java.util.ArrayList;
 import java.util.List;
 
-//TODO: IMPLEMENTAR LAS FUNCIONES DE AGREGAR Y REUCIR STOCK EN EL MENU
-
 public class InventarioService implements InventarioManager{
     private ProductoRepository repository;
 

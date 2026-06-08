@@ -8,4 +8,5 @@ public interface UsuarioRepository {
     void guardar(Usuario usuario);
     Usuario buscarPorUsername(String unsername);
     List<Usuario> listar();
+    void modificar(Usuario usuario);
 }
