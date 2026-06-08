@@ -20,13 +20,6 @@ import service.*;
 import java.util.Scanner;
 
 public class Main {
-
-    /*
-    *   Hola Enzo y Fernanda.
-    * Para que el codigo que van a programar se acople bien con los demás códigos hay ciertas clases que serán nuestras bases
-    * y que las usaremos los tres,
-    *
-    * */
     public static void main(String[] args) {
         //REPOSITORIS
         ProductoRepository productoRepository = new ProductoRepositoryImpl();

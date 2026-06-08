@@ -6,9 +6,7 @@ import model.Usuario;
 import model.types.UsuarioRoles;
 import patrones.facade.SeguridadFacade;
 import patrones.proxy.InventarioManager;
-import service.FacturacionService;
-import service.ProductoService;
-import service.UsuarioService;
+import service.*;
 
 import java.util.Scanner;
 

@@ -6,7 +6,7 @@ public class SesionActual {
     private static SesionActual instancia;
     private Usuario usuario;
 
-    public SesionActual() {
+    private SesionActual() {
     }
 
     public static SesionActual getInstance() {
