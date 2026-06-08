@@ -1,5 +1,7 @@
 import model.Usuario;
 import model.types.UsuarioRoles;
+import patrones.proxy.InventarioManager;
+import patrones.proxy.InventarioProxy;
 import presentation.MenuConsola;
 import repository.PedidoRepository;
 import repository.ProductoRepository;
@@ -10,14 +12,6 @@ import repository.impl.UsuarioRepositoryImpl;
 import service.*;
 
 public class Main {
-
-    /*
-    *   Hola Enzo y Fernanda.
-    * Para que el codigo que van a programar se acople bien con los demás códigos hay ciertas clases que serán nuestras bases
-    * y que las usaremos los tres,
-    *
-    * */
-
     public static void main(String[] args) {
         //REPOSITORIS
         ProductoRepository productoRepository = new ProductoRepositoryImpl();
@@ -25,12 +19,12 @@ public class Main {
         UsuarioRepository usuarioRepository = new UsuarioRepositoryImpl();
 
         //SERVICES
-        PedidoService pedidoService = new PedidoService(pedidoRepository);
+        InventarioManager inventarioService = new InventarioProxy(new InventarioService(productoRepository));
+
+        PedidoService pedidoService = new PedidoService(pedidoRepository, inventarioService);
         ProductoService productoService = new ProductoService(productoRepository);
         UsuarioService usuarioService = new UsuarioService(usuarioRepository);
-        InventarioService inventarioService = new InventarioService(productoRepository);
-
-        CarritoService carritoService = new CarritoService();
+        CarritoService carritoService = new CarritoService(inventarioService);
 
         //DATOS INICIALES
         usuarioService.registrarUsuario(
@@ -40,6 +34,15 @@ public class Main {
                         UsuarioRoles.ADMINISTRADOR
                 )
         );
+
+        usuarioService.registrarUsuario(
+                new Usuario(
+                        "cliente",
+                        "1234",
+                        UsuarioRoles.CLIENTE
+                )
+        );
+
 
         //MENU
         MenuConsola menu = new MenuConsola(

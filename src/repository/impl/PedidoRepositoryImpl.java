@@ -25,7 +25,7 @@ public class PedidoRepositoryImpl implements PedidoRepository {
     @Override
     public List<Pedido> listar() {
         if (pedidos.isEmpty()) {
-            return null;
+            return pedidos;
         }
 
         System.out.println("\n=========================================================================");

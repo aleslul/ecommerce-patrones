@@ -3,30 +3,49 @@ package service;
 import model.Carrito;
 import model.ItemCarrito;
 import model.Producto;
+import patrones.proxy.InventarioManager;
 
-import java.util.List;
+//TODO: LOS ITEMCARRITO NO SE CONCATENAN SI SE AGREGAN UNO POR UNO
+//TODO:
 
 public class CarritoService {
     private Carrito carrito;
+    private InventarioManager inventarioService;
 
-    public CarritoService() {
+    public CarritoService(InventarioManager inventarioService) {
         this.carrito = new Carrito();
+        this.inventarioService = inventarioService;
     }
 
-    public void agregarProducto(Producto producto, int cantidad) {
-        //TODO: por el momento funciona pero se puede mejorar (creo) - aleslul
+    public boolean agregarProducto(Producto producto, int cantidad) {
+
         if (producto == null) {
-            System.out.println("ERROR: Producto invalido");
-            return;
+            System.out.println("ERROR: Producto inválido");
+            return false;
         }
 
         if (cantidad <= 0) {
-            System.out.println("ERROR: Cantidad invalida");
-            return;
+            System.out.println("ERROR: Cantidad inválida");
+            return false;
         }
 
-        ItemCarrito item = new ItemCarrito(producto, cantidad);
-        carrito.getItems().add(item);
+        int cantidadActual = 0;
+
+        for (ItemCarrito item : carrito.getItems()) {
+
+            if (item.getProducto().getCodigo().equals(producto.getCodigo())) {
+                cantidadActual += item.getCantidad();
+            }
+        }
+
+        int cantidadTotal = cantidadActual + cantidad;
+
+        if (!inventarioService.verificarStock(producto.getCodigo(), cantidadTotal)) {
+            System.out.println("ERROR: Stock insuficiente");
+            return false;
+        }
+        carrito.getItems().add(new ItemCarrito(producto, cantidad));
+        return true;
     }
 
     public void quitarProducto(String codigo) {

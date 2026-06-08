@@ -74,17 +74,17 @@ src/
 ├── model/
 ├── service/
 ├── repository/
-├── factory/
-├── builder/
-├── prototype/
-├── adapter/
-├── bridge/
-├── composite/
-├── decorator/
-├── facade/
-├── proxy/
-├── singleton/
-├── pool/
+├── patrones.factory/
+├── patrones.builder/
+├── patrones.prototype/
+├── patrones.adapter/
+├── patrones.bridge/
+├── patrones.composite/
+├── patrones.decorator/
+├── patrones.facade/
+├── patrones.proxy/
+├── patrones.singleton/
+├── patrones.pool/
 └── Main.java
 ```
 
