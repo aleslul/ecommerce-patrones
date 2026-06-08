@@ -7,9 +7,11 @@ import presentation.AdminMenu;
 import presentation.ClienteMenu;
 import presentation.LoginMenu;
 import presentation.MenuConsola;
+import repository.FacturacionRepository;
 import repository.PedidoRepository;
 import repository.ProductoRepository;
 import repository.UsuarioRepository;
+import repository.impl.FacturacionRepositoryImpl;
 import repository.impl.PedidoRepositoryImpl;
 import repository.impl.ProductoRepositoryImpl;
 import repository.impl.UsuarioRepositoryImpl;
@@ -30,7 +32,7 @@ public class Main {
         ProductoRepository productoRepository = new ProductoRepositoryImpl();
         PedidoRepository pedidoRepository = new PedidoRepositoryImpl();
         UsuarioRepository usuarioRepository = new UsuarioRepositoryImpl();
-
+        FacturacionRepository facturacionRepository = new FacturacionRepositoryImpl();
         //SERVICES
 
         InventarioService inventarioReal = new InventarioService(productoRepository);
@@ -39,6 +41,9 @@ public class Main {
         ProductoService productoService = new ProductoService(productoRepository);
         UsuarioService usuarioService = new UsuarioService(usuarioRepository);
         SeguridadFacade seguridadFacade = new SeguridadFacade(usuarioService);
+        PagoService pagoService = new PagoService();
+        FacturacionService facturacionService = new FacturacionService(facturacionRepository);
+
         //USANDO INVENTARIOSERVICE:
         PedidoService pedidoService = new PedidoService(pedidoRepository, inventarioReal);
 
@@ -76,7 +81,9 @@ public class Main {
                         productoService,
                         carritoService,
                         pedidoService,
-                        seguridadFacade
+                        seguridadFacade,
+                        pagoService,
+                        facturacionService
                 );
 
         AdminMenu adminMenu =
@@ -84,7 +91,8 @@ public class Main {
                         scanner,
                         productoService,
                         usuarioService,
-                        inventarioProxy
+                        inventarioProxy,
+                        facturacionService
                 );
 
         MenuConsola menuConsola =

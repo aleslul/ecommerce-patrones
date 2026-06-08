@@ -2,10 +2,11 @@ package presentation;
 
 import model.Pedido;
 import model.Producto;
+import model.types.PedidoEstado;
+import patrones.bridge.pay.abstraction.MetodoPago;
 import patrones.facade.SeguridadFacade;
-import service.CarritoService;
-import service.PedidoService;
-import service.ProductoService;
+import patrones.singleton.sesion.SesionActual;
+import service.*;
 
 
 import java.util.Scanner;
@@ -18,15 +19,19 @@ public class ClienteMenu {
     private CarritoService carritoService;
     private PedidoService pedidoService;
     private SeguridadFacade seguridadFacade;
+    private PagoService pagoService;
+    private FacturacionService facturacionService;
 
     public ClienteMenu(Scanner scanner, ProductoService productoService,
                        CarritoService carritoService, PedidoService pedidoService,
-                       SeguridadFacade seguridadFacade) {
+                       SeguridadFacade seguridadFacade, PagoService pagoService, FacturacionService facturacionService) {
         this.scanner = scanner;
         this.productoService = productoService;
         this.carritoService = carritoService;
         this.pedidoService = pedidoService;
         this.seguridadFacade = seguridadFacade;
+        this.pagoService = pagoService;
+        this.facturacionService = facturacionService;
     }
 
     public void iniciar() {
@@ -294,32 +299,54 @@ public class ClienteMenu {
 
     //TODO: IMPLEMENTAR FUNCIONES DE PAGOS
     private void menuPagos() {
-
         int opcion;
-
         do {
-
             System.out.println("""
                 
-                ===== PAGOS =====
+                ===== CAJA REGISTRADORA =====
                 
-                1. Pagar pedido
-                2. Ver comprobante de pago
+                1. Pagar pedido y emitir comprobante
+                2. Ver mis comprobantes de pago
                 0. Volver
                 
                 """);
-
             opcion = scanner.nextInt();
             scanner.nextLine();
 
             switch (opcion) {
-
-                case 1 -> System.out.println("FUNCION NO IMPLEMENTADA");
-
-                case 2 -> System.out.println("FUNCION NO IMPLEMENTADA");
+                case 1 -> procesarCompraCompleta();
+                case 2 -> facturacionService.listarComprobantes(); // El servicio filtra para mostrar SOLO los suyos
             }
-
         } while (opcion != 0);
+    }
+
+    private void procesarCompraCompleta() {
+        System.out.println("\n--- PROCESO DE PAGO Y FACTURACIÓN ---");
+        System.out.print("Ingrese el código del pedido a pagar (Ej: PED-1): ");
+        String codigoPedido = scanner.nextLine();
+
+        Pedido pedido = pedidoService.buscarPedido(codigoPedido);
+        if (pedido == null) {
+            System.out.println("Error: Pedido no encontrado.");
+            return;
+        }
+
+        if (pedido.getEstado() == PedidoEstado.PAGADO) {
+            System.out.println("Aviso: Este pedido ya ha sido pagado.");
+            return;
+        }
+
+        // 1. LLAMAMOS AL SERVICIO DE PAGOS (El Scanner está adentro)
+        MetodoPago pagoExitosoObject = pagoService.procesarCompra(pedido);
+
+        if (pagoExitosoObject == null) {
+            System.out.println("El pago falló o fue cancelado.");
+            return;
+        }
+
+        // 2. LLAMAMOS AL SERVICIO DE FACTURACIÓN (El Scanner está adentro)
+        String usernameCliente = SesionActual.getInstance().getUsuario().getUsername();
+        facturacionService.generarComprobante(pedido, pagoExitosoObject, usernameCliente);
     }
 }
 
