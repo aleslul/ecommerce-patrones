@@ -48,22 +48,22 @@ public class CarritoService {
         return true;
     }
 
-    public void quitarProducto(String codigo) {
+    public boolean quitarProducto(String codigo) {
+
         ItemCarrito encontrado = null;
 
-        for (ItemCarrito ic : carrito.getItems()) {
-            if (ic.getProducto().getCodigo().equals(codigo)) {
+        for(ItemCarrito ic :carrito.getItems()) {
+            if(ic.getProducto().getCodigo().equals(codigo)) {
                 encontrado = ic;
                 break;
             }
         }
-
-        if (encontrado == null) {
-            System.out.println("ERROR: Producto no encontrado en el carrito");
-            return;
+        if(encontrado == null) {
+            return false;
         }
-
         carrito.getItems().remove(encontrado);
+
+        return true;
     }
 
     //TODO: ARRREGLAR LOS TOSTRING PQ ESTAN BIEN PINCHES FEOS
@@ -97,6 +97,7 @@ public class CarritoService {
 
     public void vaciarCarrito() {
         carrito.getItems().clear();
+        System.out.println("\nCarrito vaciado");
     }
 
     public Carrito obtenerCarrito() {
