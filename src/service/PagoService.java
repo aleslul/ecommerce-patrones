@@ -74,7 +74,8 @@ public class PagoService {
             pedido.setEstado(PedidoEstado.PAGADO);
 
             // Lo guardamos en nuestra base de datos
-            pagoRepository.guardarPago(pago);
+            pagoRepository.guardar(pago);
+            System.out.println("El pago ha sido registrado correctamente en el sistema.");
         }
     }
 }

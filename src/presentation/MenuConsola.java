@@ -1,17 +1,24 @@
 package presentation;
 
 import model.*;
+import model.types.PedidoEstado;
 import model.types.UsuarioRoles;
+import patrones.bridge.pay.concrete_implementor.Dolares;
+import patrones.bridge.pay.concrete_implementor.Soles;
+import patrones.bridge.pay.implementor.Moneda;
+import patrones.bridge.pay.types.TipoPago;
+import patrones.proxy.InventarioManager;
+import patrones.singleton.sesion.SesionActual;
 import service.*;
 
+import javax.swing.plaf.synth.SynthOptionPaneUI;
 import java.util.Scanner;
 
 /*
-* NOTE: Hola, todo lo que quieran imprimir, TODO, lo tienen que hacer aqui y despues esto se referencia en el main.
-* */
+ * NOTE: Hola, todo lo que quieran imprimir, TODO, lo tienen que hacer aqui y despues esto se referencia en el main.
+ * */
 
 public class MenuConsola {
-
     private Scanner scanner;
 
     private ProductoService productoService;
@@ -19,11 +26,15 @@ public class MenuConsola {
     private CarritoService carritoService;
     private PedidoService pedidoService;
 
+    // SOLO TU SERVICIO DE PAGOS POR AHORA
+    private PagoService pagoService;
+
     public MenuConsola(
             ProductoService productoService,
             UsuarioService usuarioService,
             CarritoService carritoService,
-            PedidoService pedidoService
+            PedidoService pedidoService,
+            PagoService pagoService // Eliminé el de facturación aquí
     ) {
 
         this.scanner = new Scanner(System.in);
@@ -32,9 +43,14 @@ public class MenuConsola {
         this.usuarioService = usuarioService;
         this.carritoService = carritoService;
         this.pedidoService = pedidoService;
+
+        // Inicializamos solo pagos
+        this.pagoService = pagoService;
     }
 
     public void iniciar() {
+
+        iniciarSesion();
 
         int opcion;
 
@@ -50,6 +66,7 @@ public class MenuConsola {
                 2. Usuarios
                 3. Carrito
                 4. Pedidos
+                5. Caja (Solo Pagos por ahora)
                 0. Salir
                 
                 """);
@@ -61,27 +78,38 @@ public class MenuConsola {
             switch (opcion) {
 
                 case 1 -> menuProductos();
-
                 case 2 -> menuUsuarios();
-
                 case 3 -> menuCarrito();
-
                 case 4 -> menuPedidos();
-
+                case 5 -> menuCaja(); // TU MÓDULO RECORTADO
                 case 0 -> System.out.println("Hasta luego.");
-
                 default -> System.out.println("Opción inválida.");
             }
 
         } while (opcion != 0);
     }
 
+    private void iniciarSesion() {
+        System.out.println("==== INICIO DE SESIÓN ====");
+        System.out.print("Username: ");
+
+        String username = scanner.nextLine();
+
+        Usuario usuario = usuarioService.buscarUsuarioPorUsername(username);
+
+        if (usuario == null) {
+            System.out.println("Usuario no encontrado");
+            return;
+        }
+
+        SesionActual.getInstance().setUsuario(usuario);
+
+        System.out.println("Bienvenido " + usuario.getUsername());
+    }
+
     private void menuProductos() {
-
         int opcion;
-
         do {
-
             System.out.println("""
                 
                 ===== PRODUCTOS =====
@@ -93,109 +121,65 @@ public class MenuConsola {
                 0. Volver
                 
                 """);
-
             opcion = scanner.nextInt();
             scanner.nextLine();
 
             switch (opcion) {
-
                 case 1 -> registrarProducto();
-
                 case 2 -> buscarProducto();
-
                 case 3 -> productoService.listarProductos();
-
                 case 4 -> eliminarProducto();
-
             }
-
         } while (opcion != 0);
     }
 
     private void registrarProducto() {
-
         System.out.print("Código: ");
         String codigo = scanner.nextLine();
-
         System.out.print("Nombre: ");
         String nombre = scanner.nextLine();
-
         System.out.print("Precio: ");
         double precio = scanner.nextDouble();
-
         System.out.print("Stock: ");
         int stock = scanner.nextInt();
         scanner.nextLine();
-
         System.out.println("Categoria: ");
         String categoriaNombre = scanner.nextLine();
         Categoria categoria = new Categoria(categoriaNombre);
-
         Producto producto = new Producto();
-
         producto.setCodigo(codigo);
         producto.setNombre(nombre);
         producto.setPrecio(precio);
         producto.setStock(stock);
         producto.setCategoria(categoria);
-
         productoService.registrarProducto(producto);
-
         System.out.println("Producto registrado.");
     }
 
     private void buscarProducto() {
-
         System.out.print("Código: ");
-
         String codigo = scanner.nextLine();
-
-        Producto producto =
-                productoService.buscarProducto(
-                        codigo
-                );
-
+        Producto producto = productoService.buscarProducto(codigo);
         if (producto == null) {
-
-            System.out.println(
-                    "Producto no encontrado."
-            );
-
+            System.out.println("Producto no encontrado.");
             return;
         }
-
         System.out.println(producto);
     }
 
     private void eliminarProducto() {
-
         System.out.print("Código: ");
-
         String codigo = scanner.nextLine();
-
-        Producto producto =
-                productoService.buscarProducto(
-                        codigo
-                );
-
+        Producto producto = productoService.buscarProducto(codigo);
         if (producto != null) {
-
-            productoService.eliminarProducto(
-                    producto
-            );
-
-            System.out.println(
-                    "Producto eliminado."
-            );
+            productoService.eliminarProducto(producto);
+            System.out.println("Producto eliminado.");
         }
     }
 
     private void menuUsuarios() {
-
         int opcion;
-
         do {
-
             System.out.println("""
                 
                 ===== USUARIOS =====
@@ -205,116 +189,70 @@ public class MenuConsola {
                 0. Volver
                 
                 """);
-
             opcion = scanner.nextInt();
             scanner.nextLine();
-
             switch (opcion) {
-
                 case 1 -> registrarUsuario();
-
                 case 2 -> usuarioService.listarUsuarios();
-
             }
-
         } while (opcion != 0);
     }
 
     private void registrarUsuario() {
-
         System.out.print("Username: ");
         String username = scanner.nextLine();
-
         System.out.print("Password: ");
         String password = scanner.nextLine();
-
-        Usuario usuario =
-                new Usuario(
-                        username,
-                        password,
-                        UsuarioRoles.CLIENTE //EL ADMINISTRADOR SE CREA EN EL MAIN
-                );
-
-        usuarioService.registrarUsuario(
-                usuario
-        );
-
-        System.out.println(
-                "Usuario registrado."
-        );
+        Usuario usuario = new Usuario(username, password, UsuarioRoles.CLIENTE);
+        usuarioService.registrarUsuario(usuario);
+        System.out.println("Usuario registrado.");
     }
 
     private void menuCarrito() {
-
         int opcion;
-
         do {
-
             System.out.println("""
                 
                 ===== CARRITO =====
                 
                 1. Agregar producto
-                2. Ver carrito
-                3. Vaciar carrito
+                2. Qutar producto
+                3. Ver carrito
+                4. Vaciar carrito
                 0. Volver
                 
                 """);
-
             opcion = scanner.nextInt();
             scanner.nextLine();
-
             switch (opcion) {
-
                 case 1 -> agregarProductoCarrito();
-
-                case 2 -> carritoService.mostrarCarrito();
-
-                case 3 -> carritoService.vaciarCarrito();
+                case 2 -> System.out.println("NO HAN AGREGADO LA FUNCION QUITAR PRODUCTO");
+                case 3 -> carritoService.mostrarCarrito();
+                case 4 -> carritoService.vaciarCarrito();
             }
-
         } while (opcion != 0);
     }
 
     private void agregarProductoCarrito() {
-
         System.out.print("Código producto: ");
-
         String codigo = scanner.nextLine();
-
-        Producto producto =
-                productoService.buscarProducto(codigo);
-
+        Producto producto = productoService.buscarProducto(codigo);
         if (producto == null) {
-
-            System.out.println(
-                    "Producto no encontrado."
-            );
-
+            System.out.println("Producto no encontrado.");
             return;
         }
-
         System.out.print("Cantidad: ");
-
         int cantidad = scanner.nextInt();
         scanner.nextLine();
-
-        carritoService.agregarProducto(
-                producto,
-                cantidad
-        );
-
-        System.out.println(
-                "Producto agregado."
-        );
+        boolean agregado = carritoService.agregarProducto(producto, cantidad);
+        if (agregado) {
+            System.out.println("Producto agregado al carrito");
+        }
     }
 
     private void menuPedidos() {
-
         int opcion;
-
         do {
-
             System.out.println("""
                 
                 ===== PEDIDOS =====
@@ -324,29 +262,115 @@ public class MenuConsola {
                 0. Volver
                 
                 """);
+            opcion = scanner.nextInt();
+            scanner.nextLine();
+            switch (opcion) {
+                case 1 -> generarPedido();
+                case 2 -> pedidoService.listarPedidos();
+            }
+        } while (opcion != 0);
+    }
 
+    private void generarPedido() {
+        Pedido pedido = pedidoService.crearPedido(carritoService.obtenerCarrito());
+        if (pedido != null) {
+            carritoService.vaciarCarrito();
+            System.out.println("Pedido generado correctamente.");
+        }
+    }
+
+
+    // ==========================================================
+    // AQUI EMPIEZA TU ZONA PAPE (MÓDULO DE CAJA - SOLO PAGOS)
+    // ==========================================================
+
+    private void menuCaja() {
+        int opcion;
+        do {
+            System.out.println("""
+                
+                ===== CAJA REGISTRADORA =====
+                
+                1. Pagar Pedido
+                2. Ver Historial de Pagos
+                0. Volver
+                
+                """);
+            System.out.print("Seleccione una opción: ");
             opcion = scanner.nextInt();
             scanner.nextLine();
 
             switch (opcion) {
-
-                case 1 -> generarPedido();
-
-                case 2 -> pedidoService.listarPedidos();
+                case 1 -> procesarCompraCompleta();
+                case 2 -> pagoService.listarPagos(); //Asegúrate que tu PagoService tenga este método llamado listarPagos()
             }
-
         } while (opcion != 0);
     }
 
-    //TODO: Actualizar esto despues con builder
-    private void generarPedido() {
+    private void procesarCompraCompleta() {
+        System.out.println("\n--- PROCESO DE PAGO ---");
+        System.out.print("Ingrese el código del pedido a pagar: ");
+        String codigoPedido = scanner.nextLine();
 
-        pedidoService.crearPedido(carritoService.obtenerCarrito());
+        // IMPORTANTE: Recuerda que Enzo debe tener buscarPedido(codigo) creado.
+        Pedido pedido = pedidoService.buscarPedido(codigoPedido);
 
-        carritoService.vaciarCarrito();
 
-        System.out.println(
-                "Pedido generado."
-        );
+        if (pedido == null) {
+            System.out.println("Error: Pedido no encontrado.");
+            return;
+        }
+
+        if (pedido.getEstado() == PedidoEstado.PAGADO) {
+            System.out.println("Aviso: Este pedido ya ha sido pagado.");
+            return;
+        }
+
+        // 1. ELECCIÓN DE MONEDA (BRIDGE)
+        System.out.println("\nTotal a pagar: S/ " + pedido.getTotal());
+        System.out.println("¿En qué moneda desea pagar?");
+        System.out.println("1. SOLES");
+        System.out.println("2. DOLARES");
+        System.out.print("Opción: ");
+        int opcMoneda = scanner.nextInt();
+        scanner.nextLine();
+
+        Moneda monedaElegida = (opcMoneda == 2) ? new Dolares() : new Soles();
+
+        // 2. ELECCIÓN DE MÉTODO DE PAGO
+        System.out.println("\n¿Qué método de pago utilizará?");
+        System.out.println("1. TARJETA");
+        System.out.println("2. YAPE");
+        System.out.println("3. PLIN");
+        System.out.print("Opción: ");
+        int opcPago = scanner.nextInt();
+        scanner.nextLine();
+
+        TipoPago tipoPago = TipoPago.TARJETA;
+        String[] datosPago = null;
+
+        // Validaciones directas en consola
+        if (opcPago == 1) {
+            tipoPago = TipoPago.TARJETA;
+            String num, fecha, cvv;
+            do { System.out.print("Ingrese los 16 dígitos de su tarjeta: "); num = scanner.nextLine(); } while(!num.matches("\\d{16}"));
+            do { System.out.print("Ingrese fecha de caducidad (MM/yy): "); fecha = scanner.nextLine(); } while(!fecha.matches("^(0[1-9]|1[0-2])/\\d{2}$"));
+            do { System.out.print("Ingrese los 3 dígitos del CVV: "); cvv = scanner.nextLine(); } while(!cvv.matches("\\d{3}"));
+            datosPago = new String[]{num, fecha, cvv};
+
+        } else if (opcPago == 2 || opcPago == 3) {
+            tipoPago = (opcPago == 2) ? TipoPago.YAPE : TipoPago.PLIN;
+            String cel, cod;
+            do { System.out.print("Ingrese celular (9 dígitos): "); cel = scanner.nextLine(); } while(!cel.matches("\\d{9}"));
+            do { System.out.print("Ingrese código de aprobación (6 dígitos): "); cod = scanner.nextLine(); } while(!cod.matches("\\d{6}"));
+            datosPago = new String[]{cel, cod};
+        }
+
+        // Ejecutar el servicio de pago de tu rama
+        // NOTA: Ajusta los parámetros de procesarCompra a como lo tengas en tu PagoService actualmente
+        pagoService.procesarCompra(pedido, tipoPago, monedaElegida);
+        // Si tu servicio acepta el array datosPago, ponlo: pagoService.procesarCompra(pedido, tipoPago, monedaElegida, datosPago);
+
+        System.out.println("\n¡Simulación de Pago finalizada! (El módulo de Facturación está en construcción...)");
     }
 }

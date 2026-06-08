@@ -5,6 +5,9 @@ import repository.UsuarioRepository;
 
 import java.util.List;
 
+//TODO: AGREGAR LA FUNCION DE CAMBIAR DE USUARIO PARA CAMBIAR LA SESIÓN SIN TENER QUE REINICIAR EL PROGRAMA
+//TODO: IMPLEMENTAR PROXY PARA QUE SOLO EL ADMINISTRADOR PUEDA ACCEDER AL MENÚ DE USUARIOS Y PODER TRABAJAR EN EL (REGISTRAR, MODIFICAR, LISTAR, ETC)
+
 public class UsuarioService {
     private UsuarioRepository repository;
 
@@ -33,5 +36,9 @@ public class UsuarioService {
             return;
         }
         repository.guardar(usuario);
+    }
+
+    public Usuario buscarUsuarioPorUsername(String username) {
+        return repository.buscarPorUsername(username);
     }
 }
