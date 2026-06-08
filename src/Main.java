@@ -1,11 +1,9 @@
 import model.Usuario;
 import model.types.UsuarioRoles;
 import presentation.MenuConsola;
-import repository.PagoRepository;
 import repository.PedidoRepository;
 import repository.ProductoRepository;
 import repository.UsuarioRepository;
-import repository.impl.PagoRepositoryImpl;
 import repository.impl.PedidoRepositoryImpl;
 import repository.impl.ProductoRepositoryImpl;
 import repository.impl.UsuarioRepositoryImpl;

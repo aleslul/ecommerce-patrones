@@ -1,11 +1,14 @@
 package patrones.abstract_factory.comprobantes;
 
+import model.types.PedidoEstado;
+import patrones.bridge.pay.abstraction.MetodoPago;
+
 public class Boleta extends ComprobanteBase{
     private String dni;
     private String nombres;
 
-    public Boleta(String numeroComprobante, String direccionEnvio, String detalleCarrito, double total, String dni, String nombres) {
-        super(numeroComprobante, direccionEnvio, detalleCarrito, total);
+    public Boleta(String numeroComprobante, String direccionEnvio, String detalleCarrito, double total, MetodoPago metodoPago, PedidoEstado estado, String usernameCliente, String dni, String nombres) {
+        super(numeroComprobante, direccionEnvio, detalleCarrito, total, metodoPago, estado, usernameCliente);
         this.dni = dni;
         this.nombres = nombres;
     }
@@ -15,6 +18,7 @@ public class Boleta extends ComprobanteBase{
         return "\n========================================\n" +
                 "               BOLETA ELECTRÓNICA\n" +
                 "========================================\n" +
+                "Usuario Cuenta: " + usernameCliente + "\n" +
                 "RUC Emisor: " + rucMiEmpresa + "\n" +
                 "Nro Comprobante: " + numeroComprobante + "\n" +
                 "Cliente: " + nombres + "\n" +
@@ -24,6 +28,8 @@ public class Boleta extends ComprobanteBase{
                 "DETALLE DE COMPRA:\n" + detalleCarrito +
                 "----------------------------------------\n" +
                 "IMPORTE TOTAL: S/ " + String.format("%.2f", total) + "\n" +
+                "Estado del Pedido: " + estado + "\n" +
+                "Método de Pago: " + metodoPago.getClass().getSimpleName() + "\n" +
                 "========================================";
     }
 }
