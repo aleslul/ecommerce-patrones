@@ -30,7 +30,7 @@ Aquí estan los objetos de negocio, estas clases solamente tienen sus atributos,
 
 # ¿Y qué hay de los patrones?
 
-Los patrones (singleton, proxy, prototype, etc) no tienen un sitio propio y estático en el flujo, se implementan donde sean necesario, normalmente entre capas, de la siguiente manera:
+Los patrones (patrones.singleton, patrones.proxy, patrones.prototype, etc) no tienen un sitio propio y estático en el flujo, se implementan donde sean necesario, normalmente entre capas, de la siguiente manera:
 
 ![img_1.png](img_1.png)
 

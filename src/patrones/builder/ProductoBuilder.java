@@ -1,4 +1,4 @@
-package builder;
+package patrones.builder;
 
 import model.Categoria;
 import model.Producto;

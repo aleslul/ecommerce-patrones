@@ -2,8 +2,11 @@ package presentation;
 
 import model.*;
 import model.types.UsuarioRoles;
+import patrones.proxy.InventarioManager;
+import patrones.singleton.sesion.SesionActual;
 import service.*;
 
+import javax.swing.plaf.synth.SynthOptionPaneUI;
 import java.util.Scanner;
 
 /*
@@ -35,6 +38,8 @@ public class MenuConsola {
     }
 
     public void iniciar() {
+
+        iniciarSesion();
 
         int opcion;
 
@@ -76,12 +81,32 @@ public class MenuConsola {
         } while (opcion != 0);
     }
 
+    //TODO: Enzo tiene que cambiar esto para agregar facade aisi q riko si dame mas por el costadito
+    private void iniciarSesion() {
+        //ESTO ES POR LOS JAJAS
+        System.out.println("==== INICIO DE SESIÓN ====");
+        System.out.print("Username: ");
+
+        String username = scanner.nextLine();
+
+        Usuario usuario = usuarioService.buscarUsuarioPorUsername(username);
+
+        if (usuario == null) {
+            System.out.println("Usuario no encontrado");
+            return;
+        }
+
+        SesionActual.getInstance().setUsuario(usuario);
+
+        System.out.println("Bienvenido " + usuario.getUsername());
+    }
+
     private void menuProductos() {
 
         int opcion;
 
         do {
-
+            //TODO: IMPLEMENTAR LA FUNCION DE AGREGAR Y REDUCIR STOCK (InventarioService)
             System.out.println("""
                 
                 ===== PRODUCTOS =====
@@ -190,6 +215,7 @@ public class MenuConsola {
         }
     }
 
+    //TODO: REVISAR USUARIOS
     private void menuUsuarios() {
 
         int opcion;
@@ -255,8 +281,9 @@ public class MenuConsola {
                 ===== CARRITO =====
                 
                 1. Agregar producto
-                2. Ver carrito
-                3. Vaciar carrito
+                2. Qutar producto
+                3. Ver carrito
+                4. Vaciar carrito
                 0. Volver
                 
                 """);
@@ -268,9 +295,11 @@ public class MenuConsola {
 
                 case 1 -> agregarProductoCarrito();
 
-                case 2 -> carritoService.mostrarCarrito();
+                case 2 -> System.out.println("NO HAN AGREGADO LA FUNCION QUITAR PRODUCTO");
 
-                case 3 -> carritoService.vaciarCarrito();
+                case 3 -> carritoService.mostrarCarrito();
+
+                case 4 -> carritoService.vaciarCarrito();
             }
 
         } while (opcion != 0);
@@ -299,15 +328,17 @@ public class MenuConsola {
         int cantidad = scanner.nextInt();
         scanner.nextLine();
 
-        carritoService.agregarProducto(
+        boolean agregado = carritoService.agregarProducto(
                 producto,
                 cantidad
         );
 
-        System.out.println(
-                "Producto agregado."
-        );
+        if (agregado) {
+            System.out.println("Producto agregado al carrito");
+        }
     }
+
+    //TODO: AGREGAR FUNCION quitarProducto()
 
     private void menuPedidos() {
 
@@ -338,17 +369,20 @@ public class MenuConsola {
         } while (opcion != 0);
     }
 
-    //TODO: Actualizar esto despues con builder
+    //TODO: Actualizar esto despues con patrones.builder
     private void generarPedido() {
+        Pedido pedido =
+                pedidoService.crearPedido(
+                        carritoService.obtenerCarrito()
+                );
 
-        pedidoService.crearPedido(carritoService.obtenerCarrito());
+        if (pedido != null) {
 
-        carritoService.vaciarCarrito();
+            carritoService.vaciarCarrito();
 
-        System.out.println(
-                "Pedido generado."
-        );
+            System.out.println(
+                    "Pedido generado correctamente."
+            );
+        }
     }
-
-
 }

@@ -2,12 +2,15 @@ package service;
 
 import model.Producto;
 import org.w3c.dom.ls.LSInput;
+import patrones.proxy.InventarioManager;
 import repository.ProductoRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class InventarioService {
+//TODO: IMPLEMENTAR LAS FUNCIONES DE AGREGAR Y REUCIR STOCK EN EL MENU
+
+public class InventarioService implements InventarioManager{
     private ProductoRepository repository;
 
     public InventarioService(ProductoRepository repository) {
