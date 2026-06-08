@@ -13,7 +13,7 @@ public class ProductoService {
     }
 
     //FUNCIONES
-        public boolean registrarProducto(Producto producto) {
+    public boolean registrarProducto(Producto producto) {
         if (producto == null) {
             System.out.println("ERROR: Producto invalido");
             return false;

@@ -17,10 +17,11 @@ public class AdminMenu {
     private UsuarioService usuarioService;
     private InventarioManager inventarioService;
     private SeguridadFacade seguridadFacade;
+    private FacturacionService facturacionService;
 
     public AdminMenu(Scanner scanner,
             ProductoService productoService,
-            UsuarioService usuarioService, InventarioManager inventarioService
+            UsuarioService usuarioService, InventarioManager inventarioService, FacturacionService facturacionService
     ) {
 
         this.scanner = scanner;
@@ -29,6 +30,7 @@ public class AdminMenu {
         this.usuarioService = usuarioService;
         this.inventarioService = inventarioService;
         this.seguridadFacade = new SeguridadFacade(usuarioService);
+        this.facturacionService = facturacionService;
     }
 
     public void iniciar() {
@@ -362,7 +364,7 @@ public class AdminMenu {
 
             switch (opcion) {
 
-                case 1 -> System.out.println("FUNCION NO IMPLEMENTADA");
+                case 1 -> facturacionService.listarComprobantes();
             }
 
         } while (opcion != 0);
