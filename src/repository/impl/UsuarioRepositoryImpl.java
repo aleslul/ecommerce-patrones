@@ -67,4 +67,21 @@ public class UsuarioRepositoryImpl implements UsuarioRepository {
 
         return usuarios;
     }
+
+    @Override
+    public void modificar(Usuario usuario) {
+        for (int i = 0; i < usuarios.size(); i++) {
+
+            Usuario actual = usuarios.get(i);
+
+            if (
+                    actual.getUsername()
+                            .equals(usuario.getUsername())
+            ) {
+
+                usuarios.set(i, usuario);
+                return;
+            }
+        }
+    }
 }

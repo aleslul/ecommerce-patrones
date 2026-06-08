@@ -1,5 +1,6 @@
 package repository.impl;
 
+import model.ItemCarrito;
 import model.Pedido;
 import repository.PedidoRepository;
 
@@ -24,6 +25,7 @@ public class PedidoRepositoryImpl implements PedidoRepository {
 
     @Override
     public List<Pedido> listar() {
+
         if (pedidos.isEmpty()) {
             return pedidos;
         }
@@ -34,13 +36,20 @@ public class PedidoRepositoryImpl implements PedidoRepository {
                 "PRODUCTOS",
                 "TOTAL",
                 "ESTADO");
+
         System.out.println("=========================================================================");
 
         for (Pedido pedido : pedidos) {
 
+            int totalProductos = 0;
+
+            for (ItemCarrito item : pedido.getItems()) {
+                totalProductos += item.getCantidad();
+            }
+
             System.out.printf("| %-10s | %-15d | S/. %-10.2f | %-15s |%n",
                     pedido.getCodigo(),
-                    pedido.getItems().size(),
+                    totalProductos,
                     pedido.getTotal(),
                     pedido.getEstado());
         }
@@ -48,5 +57,13 @@ public class PedidoRepositoryImpl implements PedidoRepository {
         System.out.println("=========================================================================");
 
         return pedidos;
+    }
+
+    @Override
+    public Pedido buscarPedidoPorCodigo(String codigo) {
+        for (Pedido pedido : pedidos) {
+            if (pedido.getCodigo().equals(codigo)) return pedido;
+        }
+        return null;
     }
 }
