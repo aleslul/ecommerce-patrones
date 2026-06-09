@@ -63,6 +63,14 @@ public class Main {
                 )
         );
 
+        usuarioService.registrarUsuario(
+                new Usuario(
+                        "aleslul",
+                        "1234",
+                        UsuarioRoles.CLIENTE
+                )
+        );
+
 
         LoginMenu loginMenu =
                 new LoginMenu(
@@ -88,7 +96,8 @@ public class Main {
                         usuarioService,
                         inventarioProxy,
                         facturacionService,
-                        facturacionRepository
+                        facturacionRepository,
+                        pedidoProxy
                 );
 
         MenuConsola menuConsola =
