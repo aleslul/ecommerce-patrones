@@ -17,6 +17,7 @@ public class PedidoService implements PedidoManager {
     private PedidoRepository repository;
     private InventarioManager inventarioService;
 
+
     public PedidoService(PedidoRepository repository, InventarioManager inventarioService) {
         this.repository = repository;
         this.inventarioService = inventarioService;
@@ -51,13 +52,8 @@ public class PedidoService implements PedidoManager {
         pedido.setCodigo("PED-" + (repository.listar().size() + 1));
         pedido.setItems(new ArrayList<>(carrito.getItems()));
         pedido.setUsernameCliente(usuarioActual.getUsername());
-
-        double total = 0;
-        for (ItemCarrito item : carrito.getItems()) {
-            total += item.getCantidad() * item.getProducto().getPrecio();
-        }
-
-        pedido.setTotal(total);
+        
+        pedido.setTotal(carrito.calcularTotal());
         pedido.setEstado(PedidoEstado.PENDIENTE);
         repository.guardar(pedido);
 

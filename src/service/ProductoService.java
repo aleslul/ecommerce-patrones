@@ -37,13 +37,26 @@ public class ProductoService {
     }
 
     public List<Producto> listarProductos() {
-        List<Producto> productos = repository.listar();
+        return repository.listar();
+    }
 
-        if (productos.isEmpty()) {
-            System.out.println("ERROR: No existen productos registrados");
+    public void imprimirTablaProductos(List<Producto> productos) {
+        if (productos.isEmpty()){
+            System.out.println("No existen productos registrados");
+            return;
         }
+        System.out.println("\n================================================================================================");
+        System.out.printf("| %-10s | %-25s | %-10s | %-10s | %-20s |%n",
+                "CODIGO", "NOMBRE", "PRECIO", "STOCK", "CATEGORIA");
+        System.out.println("================================================================================================");
 
-        return productos;
+        for (Producto producto : productos) {
+            System.out.printf("| %-10s | %-25s | S/. %-7.2f | %-10d | %-20s |%n",
+                    producto.getCodigo(), producto.getNombre(),
+                    producto.getPrecio(), producto.getStock(),
+                    producto.getCategoria().getNombre());
+        }
+        System.out.println("================================================================================================");
     }
 
     public void eliminarProducto(Producto producto) {

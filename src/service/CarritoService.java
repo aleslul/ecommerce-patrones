@@ -38,15 +38,12 @@ public class CarritoService {
 
         int cantidadTotal = cantidadActual + cantidad;
 
-        if (!inventarioService.verificarStock(producto.getCodigo(), cantidadTotal)) {
-            System.out.println("ERROR: Stock insuficiente");
-            return false;
-        }
+        if (!inventarioService.verificarStock(producto.getCodigo(), cantidadTotal)) return false;
 
         if (itemExistente != null) {
             itemExistente.setCantidad(cantidadTotal);
         } else {
-            carrito.getItems().add(new ItemCarrito(producto, cantidad));
+            carrito.getItems().add(new ItemCarrito(producto.clonar(), cantidad));
         }
         return true;
     }
@@ -93,16 +90,7 @@ public class CarritoService {
                     subtotal);
         }
         System.out.println("================================================================================================");
-        System.out.printf("TOTAL: S/. %.2f%n", calcularTotal());
-    }
-
-    public double calcularTotal() {
-        double total = 0;
-
-        for (ItemCarrito item : carrito.getItems()) {
-            total += item.getCantidad() * item.getProducto().getPrecio();
-        }
-        return total;
+        System.out.printf("TOTAL: S/. %.2f%n", carrito.calcularTotal());
     }
 
     public void vaciarCarrito() {

@@ -5,6 +5,7 @@ import model.Pedido;
 import model.Producto;
 import model.Usuario;
 import model.types.UsuarioRoles;
+import patrones.builder.ProductoBuilder;
 import patrones.decorator.reporte.Reporte;
 import patrones.decorator.reporte.ReporteLogs;
 import patrones.decorator.reporte.ReportePagos;
@@ -122,7 +123,10 @@ public class AdminMenu {
 
                 case 2 -> buscarProducto();
 
-                case 3 -> productoService.listarProductos();
+                case 3 -> {
+                    List<Producto> listaProductos = productoService.listarProductos();
+                    productoService.imprimirTablaProductos(listaProductos);
+                }
 
                 case 4 -> agregarStock();
 
@@ -154,13 +158,13 @@ public class AdminMenu {
         String categoriaNombre = scanner.nextLine();
         Categoria categoria = new Categoria(categoriaNombre);
 
-        Producto producto = new Producto();
-
-        producto.setCodigo(codigo);
-        producto.setNombre(nombre);
-        producto.setPrecio(precio);
-        producto.setStock(stock);
-        producto.setCategoria(categoria);
+        Producto producto = new ProductoBuilder()
+                .codigo(codigo)
+                .nombre(nombre)
+                .precio(precio)
+                .stock(stock)
+                .categoria(categoria)
+                .build();
 
         if (productoService.registrarProducto(producto)){
             System.out.println("Producto registrado.");
@@ -289,7 +293,10 @@ public class AdminMenu {
 
                 case 1 -> registrarUsuario();
 
-                case 2 -> usuarioService.listarUsuarios();
+                case 2 -> {
+                    List<Usuario> listaUsuarios = usuarioService.listarUsuarios();
+                    usuarioService.imprimirTablaUsuarios(listaUsuarios);
+                }
 
                 case 3 -> modificarUsuario();
             }

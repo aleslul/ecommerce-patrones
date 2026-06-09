@@ -107,7 +107,10 @@ public class ClienteMenu {
 
             switch (opcion) {
 
-                case 1 -> productoService.listarProductos();
+                case 1 -> {
+                    List<Producto> listaProductos = productoService.listarProductos();
+                    productoService.imprimirTablaProductos(listaProductos);
+                }
 
                 case 2 -> buscarProducto();
 
