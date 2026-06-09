@@ -1,6 +1,7 @@
 import model.Usuario;
 import model.types.UsuarioRoles;
 import patrones.facade.SeguridadFacade;
+import patrones.observer.InventarioConcreteObserver;
 import patrones.proxy.inventario.InventarioManager;
 import patrones.proxy.inventario.InventarioProxy;
 import patrones.proxy.pedidos.PedidoManager;
@@ -28,10 +29,15 @@ public class Main {
         PedidoRepository pedidoRepository = new PedidoRepositoryImpl();
         UsuarioRepository usuarioRepository = new UsuarioRepositoryImpl();
         FacturacionRepository facturacionRepository = new FacturacionRepositoryImpl();
-        //SERVICES
 
+        //SERVICES
         InventarioService inventarioReal = new InventarioService(productoRepository);
+
+        InventarioConcreteObserver alertaStock = new InventarioConcreteObserver();
+        inventarioReal.suscribir(alertaStock);
+
         InventarioManager inventarioProxy = new InventarioProxy(inventarioReal);
+
         PedidoManager pedidoReal = new PedidoService(pedidoRepository, inventarioReal);
         PedidoManager pedidoProxy = new PedidoProxy(pedidoReal);
 

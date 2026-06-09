@@ -37,30 +37,6 @@ public class ProductoRepositoryImpl implements ProductoRepository {
 
     @Override
     public List<Producto> listar() {
-        if (productos.isEmpty()){
-            return productos;
-        }
-        System.out.println("\n================================================================================================");
-        System.out.printf("| %-10s | %-25s | %-10s | %-10s | %-20s |%n",
-                "CODIGO",
-                "NOMBRE",
-                "PRECIO",
-                "STOCK",
-                "CATEGORIA");
-        System.out.println("================================================================================================");
-
-        for (Producto producto : productos) {
-
-            System.out.printf("| %-10s | %-25s | S/. %-7.2f | %-10d | %-20s |%n",
-                    producto.getCodigo(),
-                    producto.getNombre(),
-                    producto.getPrecio(),
-                    producto.getStock(),
-                    producto.getCategoria().getNombre());
-        }
-
-        System.out.println("================================================================================================");
-
         return productos;
     }
 

@@ -44,27 +44,6 @@ public class UsuarioRepositoryImpl implements UsuarioRepository {
 
     @Override
     public List<Usuario> listar() {
-
-        if (usuarios.isEmpty()) {
-            System.out.println("ERROR: No existen usuarios registrados.");
-            return usuarios;
-        }
-
-        System.out.println("\n==============================================================");
-        System.out.printf("| %-20s | %-15s |%n",
-                "USERNAME",
-                "ROL");
-        System.out.println("==============================================================");
-
-        for (Usuario usuario : usuarios) {
-
-            System.out.printf("| %-20s | %-15s |%n",
-                    usuario.getUsername(),
-                    usuario.getRol());
-        }
-
-        System.out.println("==============================================================");
-
         return usuarios;
     }
 

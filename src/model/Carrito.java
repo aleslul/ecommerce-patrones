@@ -17,4 +17,12 @@ public class Carrito {
     public Carrito(List<ItemCarrito> items) {
         this.items = items;
     }
+
+    public double calcularTotal() {
+        double total = 0;
+        for (ItemCarrito item : items) {
+            total += item.getCantidad() * item.getProducto().getPrecio();
+        }
+        return total;
+    }
 }

@@ -13,13 +13,22 @@ public class UsuarioService {
     }
 
     public List<Usuario> listarUsuarios() {
-        List<Usuario> usuarios = repository.listar();
+        return repository.listar();
+    }
 
+    public void imprimirTablaUsuarios(List<Usuario> usuarios) {
         if (usuarios.isEmpty()) {
-            System.out.println("ERROR: No se han encontrado usuarios registrados");
+            System.out.println("ERROR: No se han encontrado usuarios registrados.");
+            return;
         }
+        System.out.println("\n==============================================================");
+        System.out.printf("| %-20s | %-15s |%n", "USERNAME", "ROL");
+        System.out.println("==============================================================");
 
-        return usuarios;
+        for (Usuario usuario : usuarios) {
+            System.out.printf("| %-20s | %-15s |%n", usuario.getUsername(), usuario.getRol());
+        }
+        System.out.println("==============================================================");
     }
 
     public void registrarUsuario(Usuario usuario) {
