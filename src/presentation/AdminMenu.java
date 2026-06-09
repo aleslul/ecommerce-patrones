@@ -4,8 +4,13 @@ import model.Categoria;
 import model.Producto;
 import model.Usuario;
 import model.types.UsuarioRoles;
+import patrones.decorator.reporte.Reporte;
+import patrones.decorator.reporte.ReporteLogs;
+import patrones.decorator.reporte.ReportePagos;
+import patrones.decorator.reporte.ReporteResumen;
 import patrones.facade.SeguridadFacade;
 import patrones.proxy.InventarioManager;
+import repository.FacturacionRepository;
 import service.*;
 
 import java.util.Scanner;
@@ -18,11 +23,12 @@ public class AdminMenu {
     private InventarioManager inventarioService;
     private SeguridadFacade seguridadFacade;
     private FacturacionService facturacionService;
+    private FacturacionRepository facturacionRepository;
 
     public AdminMenu(Scanner scanner,
             ProductoService productoService,
-            UsuarioService usuarioService, InventarioManager inventarioService, FacturacionService facturacionService
-    ) {
+            UsuarioService usuarioService, InventarioManager inventarioService,
+                     FacturacionService facturacionService, FacturacionRepository facturacionRepository) {
 
         this.scanner = scanner;
 
@@ -31,6 +37,7 @@ public class AdminMenu {
         this.inventarioService = inventarioService;
         this.seguridadFacade = new SeguridadFacade(usuarioService);
         this.facturacionService = facturacionService;
+        this.facturacionRepository = facturacionRepository;
     }
 
     public void iniciar() {
@@ -47,9 +54,8 @@ public class AdminMenu {
                 
                 1. Productos
                 2. Usuarios
-                3. Pagos
-                4. Reportes
-                5. Cambiar de usuario
+                3. Reportes de pago
+                4. Cambiar de usuario
                 0. Salir
                 
                 """);
@@ -64,38 +70,24 @@ public class AdminMenu {
 
                 case 2 -> menuUsuarios();
 
-                case 3 -> menuPagos();
+                case 3 -> menuReportes();
 
-                case 4 -> System.out.println("FUNCION NO IMPLEMENTADA"); //TODO: IMPLEMENTAR REPORTES
-
-                case 5 -> {
+                case 4 -> {
                     seguridadFacade.cerrarSesion();
                     return;
                 }
 
-                case 0 -> System.out.println("Hasta luego.");
+                case 0 -> {
+                    System.out.println("Hasta luego.");
+                    System.exit(0);
+                }
+
 
                 default -> System.out.println("Opción inválida.");
             }
 
         } while (opcion != 0);
     }
-
-    /* TODO: ELIMINAR FUNCION (?)
-    private boolean iniciarSesion() {
-        System.out.println("==== INICIO DE SESIÓN ====");
-        System.out.print("Username: ");
-        String username =scanner.nextLine();
-        System.out.println("Password: ");
-        String password = scanner.nextLine();
-        boolean loginExitoso = seguridadFacade.iniciarSesion(username, password);
-        if(!loginExitoso) {
-            System.out.println("Usuario o contraseña incorrectos");
-            return false;
-        }
-        System.out.println("Bienvenido " + username);
-        return true;
-    }*/
 
     private void menuProductos() {
 
@@ -344,7 +336,7 @@ public class AdminMenu {
         }
     }
 
-    private void menuPagos() {
+    private void menuReportes() {
 
         int opcion;
 
@@ -352,9 +344,12 @@ public class AdminMenu {
 
             System.out.println("""
                 
-                ===== PAGOS =====
+                ===== REPORTES =====
                 
-                1. Ver lista de pagos
+                1. Reporte base
+                2. Reporte con resumen
+                3. Reporte con logs
+                
                 0. Volver
                 
                 """);
@@ -364,10 +359,31 @@ public class AdminMenu {
 
             switch (opcion) {
 
-                case 1 -> facturacionService.listarComprobantes();
+                case 1 -> generarReporteBase();
+
+                case 2-> generarReporteResumen();
+
+                case 3-> generarReporteConLogs();
             }
 
         } while (opcion != 0);
+    }
+
+    private void generarReporteBase() {
+        Reporte reporte =
+        new ReportePagos(facturacionRepository);
+        reporte.generar();
+    }
+
+    private void generarReporteResumen() {
+        Reporte reporte = new ReporteResumen(new ReportePagos(facturacionRepository),facturacionRepository);
+        reporte.generar();
+    }
+
+    private void generarReporteConLogs() {
+
+        Reporte reporte =new ReporteLogs(new ReportePagos(facturacionRepository));
+        reporte.generar();
     }
 }
 

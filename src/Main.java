@@ -85,7 +85,8 @@ public class Main {
                         productoService,
                         usuarioService,
                         inventarioProxy,
-                        facturacionService
+                        facturacionService,
+                        facturacionRepository
                 );
 
         MenuConsola menuConsola =

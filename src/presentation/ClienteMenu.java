@@ -74,7 +74,10 @@ public class ClienteMenu {
                     return;
                 }
 
-                case 0 -> System.out.println("Hasta luego.");
+                case 0 -> {
+                    System.out.println("Hasta luego.");
+                    System.exit(0);
+                }
 
                 default -> System.out.println("Opción inválida.");
             }
@@ -274,6 +277,7 @@ public class ClienteMenu {
                 case 1 -> generarPedido();
 
                 case 2 -> pedidoService.listarPedidos();
+                //TODO: IMPLEMENTAR PROXY PARA QUE CADA USUARIO VEA SU PEDIDO
 
                 case 3 -> verDetallePedido();
             }
@@ -297,7 +301,6 @@ public class ClienteMenu {
         }
     }
 
-    //TODO: IMPLEMENTAR FUNCIONES DE PAGOS
     private void menuPagos() {
         int opcion;
         do {
