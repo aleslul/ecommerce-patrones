@@ -5,10 +5,12 @@ import model.Producto;
 import model.types.PedidoEstado;
 import patrones.bridge.pay.abstraction.MetodoPago;
 import patrones.facade.SeguridadFacade;
+import patrones.proxy.pedidos.PedidoManager;
 import patrones.singleton.sesion.SesionActual;
 import service.*;
 
 
+import java.util.List;
 import java.util.Scanner;
 
 public class ClienteMenu {
@@ -17,13 +19,13 @@ public class ClienteMenu {
 
     private ProductoService productoService;
     private CarritoService carritoService;
-    private PedidoService pedidoService;
+    private PedidoManager pedidoService;
     private SeguridadFacade seguridadFacade;
     private PagoService pagoService;
     private FacturacionService facturacionService;
 
     public ClienteMenu(Scanner scanner, ProductoService productoService,
-                       CarritoService carritoService, PedidoService pedidoService,
+                       CarritoService carritoService, PedidoManager pedidoService,
                        SeguridadFacade seguridadFacade, PagoService pagoService, FacturacionService facturacionService) {
         this.scanner = scanner;
         this.productoService = productoService;
@@ -276,8 +278,10 @@ public class ClienteMenu {
 
                 case 1 -> generarPedido();
 
-                case 2 -> pedidoService.listarPedidos();
-                //TODO: IMPLEMENTAR PROXY PARA QUE CADA USUARIO VEA SU PEDIDO
+                case 2 -> {
+                        List<Pedido> pedidos = pedidoService.listarPedidos();
+                        pedidoService.imprimirTablaPedidos(pedidos);
+                }
 
                 case 3 -> verDetallePedido();
             }

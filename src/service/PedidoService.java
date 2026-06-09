@@ -3,14 +3,17 @@ package service;
 import model.Carrito;
 import model.ItemCarrito;
 import model.Pedido;
+import model.Usuario;
 import model.types.PedidoEstado;
-import patrones.proxy.InventarioManager;
+import patrones.proxy.inventario.InventarioManager;
+import patrones.proxy.pedidos.PedidoManager;
+import patrones.singleton.sesion.SesionActual;
 import repository.PedidoRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PedidoService {
+public class PedidoService implements PedidoManager {
     private PedidoRepository repository;
     private InventarioManager inventarioService;
 
@@ -26,6 +29,13 @@ public class PedidoService {
             return null;
         }
 
+        Usuario usuarioActual = SesionActual.getInstance().getUsuario();
+
+        if (usuarioActual == null) {
+            System.out.println("ERROR: No hay una sesión activa para generar el pedido"); //No debería pasar pero por siacaso
+            return null;
+        }
+
         for (ItemCarrito item : carrito.getItems()) {
             if (!inventarioService.verificarStock(item.getProducto().getCodigo(), item.getCantidad())) {
                 System.out.println("ERROR: Stock insuficiente para " + item.getProducto().getNombre());
@@ -38,34 +48,26 @@ public class PedidoService {
         }
 
         Pedido pedido = new Pedido();
-
         pedido.setCodigo("PED-" + (repository.listar().size() + 1));
-
         pedido.setItems(new ArrayList<>(carrito.getItems()));
+        pedido.setUsernameCliente(usuarioActual.getUsername());
 
         double total = 0;
-
         for (ItemCarrito item : carrito.getItems()) {
             total += item.getCantidad() * item.getProducto().getPrecio();
         }
 
         pedido.setTotal(total);
-
         pedido.setEstado(PedidoEstado.PENDIENTE);
-
         repository.guardar(pedido);
 
         return pedido;
     }
 
+
+    //TODO: REVISAR FUNCIONAMIENTO
     public List<Pedido> listarPedidos() {
-        List<Pedido>  pedidos = repository.listar();
-
-        if (pedidos.isEmpty()) {
-            System.out.println("ERROR: No se han encontrado pedidos registrados");
-        }
-
-        return pedidos;
+        return repository.listar();
     }
 
     public Pedido buscarPedido(String codigo) {
@@ -104,5 +106,31 @@ public class PedidoService {
         }
 
         System.out.println("==================================================");
+    }
+
+    public void imprimirTablaPedidos(List<Pedido> pedidos) {
+        if (pedidos == null || pedidos.isEmpty()) {
+            System.out.println("No se han encontrado pedidos registrados.");
+            return;
+        }
+
+        System.out.println("\n=========================================================================");
+        System.out.printf("| %-10s | %-15s | %-15s | %-15s |%n",
+                "CODIGO", "PRODUCTOS", "TOTAL", "ESTADO");
+        System.out.println("=========================================================================");
+
+        for (Pedido pedido : pedidos) {
+            int totalProductos = 0;
+            for (ItemCarrito item : pedido.getItems()) {
+                totalProductos += item.getCantidad();
+            }
+
+            System.out.printf("| %-10s | %-15d | S/. %-10.2f | %-15s |%n",
+                    pedido.getCodigo(),
+                    totalProductos,
+                    pedido.getTotal(),
+                    pedido.getEstado());
+        }
+        System.out.println("=========================================================================");
     }
 }

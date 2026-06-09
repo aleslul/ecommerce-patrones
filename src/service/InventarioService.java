@@ -1,8 +1,7 @@
 package service;
 
 import model.Producto;
-import org.w3c.dom.ls.LSInput;
-import patrones.proxy.InventarioManager;
+import patrones.proxy.inventario.InventarioManager;
 import repository.ProductoRepository;
 
 import java.util.ArrayList;

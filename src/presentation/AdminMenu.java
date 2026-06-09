@@ -1,6 +1,7 @@
 package presentation;
 
 import model.Categoria;
+import model.Pedido;
 import model.Producto;
 import model.Usuario;
 import model.types.UsuarioRoles;
@@ -9,10 +10,12 @@ import patrones.decorator.reporte.ReporteLogs;
 import patrones.decorator.reporte.ReportePagos;
 import patrones.decorator.reporte.ReporteResumen;
 import patrones.facade.SeguridadFacade;
-import patrones.proxy.InventarioManager;
+import patrones.proxy.inventario.InventarioManager;
+import patrones.proxy.pedidos.PedidoManager;
 import repository.FacturacionRepository;
 import service.*;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class AdminMenu {
@@ -24,11 +27,12 @@ public class AdminMenu {
     private SeguridadFacade seguridadFacade;
     private FacturacionService facturacionService;
     private FacturacionRepository facturacionRepository;
+    private PedidoManager pedidoService;
 
     public AdminMenu(Scanner scanner,
             ProductoService productoService,
             UsuarioService usuarioService, InventarioManager inventarioService,
-                     FacturacionService facturacionService, FacturacionRepository facturacionRepository) {
+                     FacturacionService facturacionService, FacturacionRepository facturacionRepository, PedidoManager pedidoService) {
 
         this.scanner = scanner;
 
@@ -38,6 +42,7 @@ public class AdminMenu {
         this.seguridadFacade = new SeguridadFacade(usuarioService);
         this.facturacionService = facturacionService;
         this.facturacionRepository = facturacionRepository;
+        this.pedidoService = pedidoService;
     }
 
     public void iniciar() {
@@ -297,8 +302,14 @@ public class AdminMenu {
         System.out.print("Username: ");
         String username = scanner.nextLine();
 
-        System.out.print("Password: ");
-        String password = scanner.nextLine();
+        String password;
+        do {
+            System.out.print("Password: ");
+            password = scanner.nextLine();
+            if (password.trim().isEmpty()) {
+                System.out.println("ERROR: La contraseña no puede estar vacía. Intente de nuevo");
+            }
+        } while (password.trim().isEmpty());
 
         Usuario usuario =
                 new Usuario(
@@ -349,6 +360,8 @@ public class AdminMenu {
                 1. Reporte base
                 2. Reporte con resumen
                 3. Reporte con logs
+                4. Ver todos los pedidos
+                5. Buscar pedidos
                 
                 0. Volver
                 
@@ -364,9 +377,23 @@ public class AdminMenu {
                 case 2-> generarReporteResumen();
 
                 case 3-> generarReporteConLogs();
+
+                case 4 -> verTodosLosPedidos();
+
+                case 5 -> buscarPedidos();
             }
 
         } while (opcion != 0);
+    }
+    private void verTodosLosPedidos() {
+        List<Pedido> pedidos = pedidoService.listarPedidos();
+        pedidoService.imprimirTablaPedidos(pedidos);
+    }
+
+    private void buscarPedidos() {
+        System.out.println("Codigo del pedido: ");
+        String codigo = scanner.nextLine();
+        pedidoService.mostrarDetallePedido(codigo);
     }
 
     private void generarReporteBase() {
