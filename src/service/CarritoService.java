@@ -3,7 +3,7 @@ package service;
 import model.Carrito;
 import model.ItemCarrito;
 import model.Producto;
-import patrones.proxy.InventarioManager;
+import patrones.proxy.inventario.InventarioManager;
 
 public class CarritoService {
     private Carrito carrito;

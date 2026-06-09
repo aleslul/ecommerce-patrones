@@ -9,7 +9,7 @@ import patrones.decorator.reporte.ReporteLogs;
 import patrones.decorator.reporte.ReportePagos;
 import patrones.decorator.reporte.ReporteResumen;
 import patrones.facade.SeguridadFacade;
-import patrones.proxy.InventarioManager;
+import patrones.proxy.inventario.InventarioManager;
 import repository.FacturacionRepository;
 import service.*;
 
@@ -297,8 +297,14 @@ public class AdminMenu {
         System.out.print("Username: ");
         String username = scanner.nextLine();
 
-        System.out.print("Password: ");
-        String password = scanner.nextLine();
+        String password;
+        do {
+            System.out.print("Password: ");
+            password = scanner.nextLine();
+            if (password.trim().isEmpty()) {
+                System.out.println("ERROR: La contraseña no puede estar vacía. Intente de nuevo");
+            }
+        } while (password.trim().isEmpty());
 
         Usuario usuario =
                 new Usuario(

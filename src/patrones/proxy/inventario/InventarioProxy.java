@@ -1,4 +1,4 @@
-package patrones.proxy;
+package patrones.proxy.inventario;
 
 import model.Producto;
 import model.Usuario;

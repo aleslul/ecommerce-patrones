@@ -1,8 +1,10 @@
 import model.Usuario;
 import model.types.UsuarioRoles;
 import patrones.facade.SeguridadFacade;
-import patrones.proxy.InventarioManager;
-import patrones.proxy.InventarioProxy;
+import patrones.proxy.inventario.InventarioManager;
+import patrones.proxy.inventario.InventarioProxy;
+import patrones.proxy.pedidos.PedidoManager;
+import patrones.proxy.pedidos.PedidoProxy;
 import presentation.AdminMenu;
 import presentation.ClienteMenu;
 import presentation.LoginMenu;
@@ -30,6 +32,8 @@ public class Main {
 
         InventarioService inventarioReal = new InventarioService(productoRepository);
         InventarioManager inventarioProxy = new InventarioProxy(inventarioReal);
+        PedidoManager pedidoReal = new PedidoService(pedidoRepository, inventarioReal);
+        PedidoManager pedidoProxy = new PedidoProxy(pedidoReal);
 
         ProductoService productoService = new ProductoService(productoRepository);
         UsuarioService usuarioService = new UsuarioService(usuarioRepository);
@@ -37,8 +41,6 @@ public class Main {
         PagoService pagoService = new PagoService();
         FacturacionService facturacionService = new FacturacionService(facturacionRepository);
 
-        //USANDO INVENTARIOSERVICE:
-        PedidoService pedidoService = new PedidoService(pedidoRepository, inventarioReal);
 
         //USANDO PROXY:
         CarritoService carritoService = new CarritoService(inventarioProxy);
@@ -73,7 +75,7 @@ public class Main {
                         scanner,
                         productoService,
                         carritoService,
-                        pedidoService,
+                        pedidoProxy,
                         seguridadFacade,
                         pagoService,
                         facturacionService

@@ -25,6 +25,12 @@ public class PedidoRepositoryImpl implements PedidoRepository {
 
     @Override
     public List<Pedido> listar() {
+        return pedidos;
+    }
+
+    /*
+    @Override
+    public List<Pedido> listar() {
 
         if (pedidos.isEmpty()) {
             return pedidos;
@@ -57,7 +63,7 @@ public class PedidoRepositoryImpl implements PedidoRepository {
         System.out.println("=========================================================================");
 
         return pedidos;
-    }
+    } */
 
     @Override
     public Pedido buscarPedidoPorCodigo(String codigo) {

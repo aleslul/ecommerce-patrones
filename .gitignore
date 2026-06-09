@@ -40,3 +40,6 @@ target/
 ### Gradle ###
 .gradle/
 build/
+
+### RepoMix ###
+repomix-output.xml
