@@ -1,17 +1,21 @@
 package service;
 
 import model.Producto;
+import patrones.observer.InventarioObserver;
+import patrones.observer.InventarioSubject;
 import patrones.proxy.inventario.InventarioManager;
 import repository.ProductoRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class InventarioService implements InventarioManager{
+public class InventarioService implements InventarioManager, InventarioSubject {
     private ProductoRepository repository;
+    private List<InventarioObserver> observadores;
 
     public InventarioService(ProductoRepository repository) {
         this.repository = repository;
+        this.observadores = new ArrayList<>();
     }
 
     public boolean verificarStock(String codigo, int cantidad) {
@@ -38,6 +42,7 @@ public class InventarioService implements InventarioManager{
         }
 
         producto.setStock(producto.getStock() + cantidad);
+        notificar(producto);
     }
 
     public boolean reducirStock(String codigo, int cantidad) {
@@ -52,6 +57,10 @@ public class InventarioService implements InventarioManager{
         };
 
         producto.setStock(producto.getStock() - cantidad);
+
+        if (producto.getStock() == 0) {
+            notificar(producto);
+        }
         return true;
     }
 
@@ -79,5 +88,22 @@ public class InventarioService implements InventarioManager{
             if (p.getStock() < 5) resultado.add(p);
         }
         return resultado;
+    }
+
+    @Override
+    public void suscribir(InventarioObserver observador) {
+        observadores.add(observador);
+    }
+
+    @Override
+    public void desuscribir(InventarioObserver observador) {
+        observadores.remove(observador);
+    }
+
+    @Override
+    public void notificar(Producto producto) {
+        for (InventarioObserver observador : observadores) {
+            observador.actualizar(producto);
+        }
     }
 }

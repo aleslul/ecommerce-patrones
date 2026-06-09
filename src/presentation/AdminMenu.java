@@ -11,6 +11,7 @@ import patrones.decorator.reporte.ReporteLogs;
 import patrones.decorator.reporte.ReportePagos;
 import patrones.decorator.reporte.ReporteResumen;
 import patrones.facade.SeguridadFacade;
+import patrones.observer.BuzonAlertas;
 import patrones.proxy.inventario.InventarioManager;
 import patrones.proxy.pedidos.PedidoManager;
 import repository.FacturacionRepository;
@@ -51,6 +52,7 @@ public class AdminMenu {
         int opcion;
 
         do {
+            BuzonAlertas.getInstance().mostrarAlertas();
 
             System.out.println("""
                 

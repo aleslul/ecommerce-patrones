@@ -41,11 +41,12 @@ public class ClienteMenu {
         int opcion;
 
         do {
+            String username = SesionActual.getInstance().getUsuario().getUsername();
 
-            System.out.println("""
+            System.out.printf("""
                 
                 ============================
-                     E-COMMERCE
+                     E-COMMERCE (%s)
                 ============================
                 
                 1. Productos
@@ -55,7 +56,7 @@ public class ClienteMenu {
                 5. Cambiar de usuario
                 0. Salir
                 
-                """);
+                """, username);
 
             System.out.print("Seleccione una opción: ");
             opcion = scanner.nextInt();
