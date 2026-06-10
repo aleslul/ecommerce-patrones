@@ -1,106 +1,123 @@
-# Sistema de Gestión de Tienda Online - Patrones de Diseño de Software
+# E-Commerce - Patrones de Diseño de Software
+
+Aplicación de consola en Java que simula un sistema de comercio electrónico, desarrollada con el objetivo de aplicar patrones de diseño GoF (Gang of Four) en un contexto real y cohesivo.
+
+---
 
 ## Descripción
 
-Este proyecto consiste en el desarrollo de un sistema de gestión de tienda online implementado en Java mediante una aplicación de consola. El objetivo principal es aplicar diversos patrones de diseño de software estudiados durante el curso de Patrones de Diseño de Software y Arquitectura, siguiendo los principios de programación orientada a objetos y buenas prácticas de desarrollo.
+El sistema permite gestionar usuarios, productos, carritos de compra, pedidos y facturación desde una interfaz de consola. Cuenta con dos roles: **Cliente** y **Administrador**, cada uno con sus propios menús y permisos. El proyecto integra **10 patrones de diseño** distribuidos en las categorías creacional, estructural y de comportamiento.
 
-El sistema permitirá gestionar productos, inventario, carritos de compra, pedidos y métodos de pago, simulando el funcionamiento básico de una plataforma de comercio electrónico. La persistencia de datos se realizará utilizando estructuras de datos en memoria, principalmente ArrayList, sin emplear sistemas gestores de bases de datos.
-
-## Objetivos
-
-### Objetivo General
-
-Desarrollar una aplicación de comercio electrónico en consola aplicando múltiples patrones de diseño para mejorar la mantenibilidad, escalabilidad y reutilización del software.
-
-### Objetivos Específicos
-
-* Aplicar patrones creacionales para la creación flexible de objetos.
-* Aplicar patrones estructurales para mejorar la organización del sistema.
-* Implementar una arquitectura en capas que facilite el mantenimiento del proyecto.
-* Gestionar productos, pedidos y pagos mediante estructuras orientadas a objetos.
-* Utilizar Git y GitHub para el control de versiones y trabajo colaborativo.
-
-## Funcionalidades Principales
-
-* Registro y gestión de productos.
-* Administración de inventario.
-* Gestión de categorías de productos.
-* Carrito de compras.
-* Generación de pedidos.
-* Procesamiento de pagos.
-* Gestión de usuarios y permisos.
-* Generación de comprobantes y reportes.
-* Simulación de compra completa desde consola.
+---
 
 ## Patrones de Diseño Implementados
 
-### Patrones Creacionales
+### Creacionales
 
-* Factory Method
-* Abstract Factory
-* Singleton
-* Builder
-* Prototype
-* Object Pool
+| Patrón | Dónde se aplica |
+|---|---|
+| **Singleton** | `Configuracion` (IGV, tipo de cambio) y `SesionActual` (usuario autenticado) |
+| **Abstract Factory** | `FactoryComprobante` → genera `Boleta` o `Factura` según el tipo de cliente |
+| **Factory Method** | `FactoryPago` → crea instancias de `PagoTarjeta`, `PagoYape` o `PagoPlin` |
+| **Builder** | `ProductoBuilder` → construcción fluida de productos con atributos opcionales |
+| **Prototype** | `ProductoPrototype` → clonación de productos existentes |
 
-### Patrones Estructurales
+### Estructurales
 
-* Adapter
-* Bridge
-* Composite
-* Decorator
-* Facade
-* Proxy
+| Patrón | Dónde se aplica |
+|---|---|
+| **Bridge** | `MetodoPago` (abstracción) + `Moneda` (implementor) → desacopla método de pago de la moneda (Soles / Dólares) |
+| **Decorator** | Añade información de `Correo` o `Teléfono` a comprobantes; también extiende reportes con logs y resúmenes |
+| **Facade** | `SeguridadFacade` → simplifica el flujo de login (validación, autenticación, inicio de sesión) |
+| **Proxy** | `InventarioProxy` y `PedidoProxy` → control de acceso por rol antes de delegar al servicio real |
 
-## Arquitectura del Proyecto
+### De Comportamiento
 
-El sistema sigue una arquitectura en capas para separar responsabilidades y facilitar la evolución del software.
+| Patrón | Dónde se aplica |
+|---|---|
+| **Observer** | `InventarioSubject` notifica a `InventarioConcreteObserver` y `BuzonAlertas` cuando el stock de un producto es bajo |
 
-```text
-Presentación (Consola)
-        ↓
-Servicios (Lógica de Negocio)
-        ↓
-Repositorios (Persistencia)
-        ↓
-Colecciones (ArrayList)
-```
+---
 
 ## Estructura del Proyecto
 
-```text
+```
 src/
-├── presentation/
-├── model/
-├── service/
-├── repository/
-├── patrones.factory/
-├── patrones.builder/
-├── patrones.prototype/
-├── patrones.adapter/
-├── patrones.bridge/
-├── patrones.composite/
-├── patrones.decorator/
-├── patrones.facade/
-├── patrones.proxy/
-├── patrones.singleton/
-├── patrones.pool/
-└── Main.java
+├── model/                  # Entidades del dominio (Producto, Usuario, Pedido, Carrito…)
+├── patrones/
+│   ├── abstract_factory/   # Generación de comprobantes (Boleta / Factura)
+│   ├── bridge/             # Métodos de pago con soporte multidivisa
+│   ├── builder/            # Construcción de productos
+│   ├── decorator/          # Extensión de comprobantes y reportes
+│   ├── facade/             # Flujo de autenticación simplificado
+│   ├── factory/            # Creación de métodos de pago
+│   ├── observer/           # Alertas de inventario
+│   ├── prototype/          # Clonación de productos
+│   ├── proxy/              # Control de acceso a inventario y pedidos
+│   └── singleton/          # Configuración global y sesión activa
+├── presentation/           # Menús de consola (Login, Cliente, Admin)
+├── repository/             # Acceso a datos (interfaces + implementaciones en memoria)
+├── service/                # Lógica de negocio
+└── Main.java               # Punto de entrada
 ```
 
-## Tecnologías Utilizadas
+---
 
-* Java
-* Git
-* GitHub
-* UML
+## Tecnologías
+
+- **Java** (sin frameworks externos)
+- **Arquitectura en capas**: Presentation → Service → Repository → Model
+- **Almacenamiento**: en memoria (listas Java), sin base de datos
+
+---
+
+## Cómo ejecutar
+
+1. Clonar el repositorio:
+   ```bash
+   git clone https://github.com/aleslul/ecommerce-patrones.git
+   ```
+2. Abrir el proyecto en IntelliJ IDEA u otro IDE compatible con Java.
+3. Compilar y ejecutar `Main.java`.
+
+> No se requieren dependencias externas ni configuración adicional.
+
+---
+
+## Roles y funcionalidades
+
+### Cliente
+- Iniciar sesión / registrarse
+- Explorar catálogo y agregar productos al carrito
+- Realizar pedidos y elegir método de pago (Yape, Plin, Tarjeta) y moneda (Soles / Dólares)
+- Solicitar boleta o factura al finalizar la compra
+- Consultar historial de pedidos propios
+
+### Administrador
+- Todo lo anterior
+- Gestionar productos (crear, editar, eliminar)
+- Consultar y actualizar estado de todos los pedidos
+- Ver reportes de pagos, logs y resumen de ventas
+- Recibir alertas de stock bajo
+
+---
+
+## Configuración global (Singleton)
+
+El sistema arranca con los siguientes valores predeterminados gestionados por `Configuracion.getInstance()`:
+
+| Parámetro | Valor por defecto |
+|---|---|
+| IGV | 18% |
+| Tipo de cambio | S/ 3.80 por dólar |
+| Moneda por defecto | Soles |
+
+---
 
 ## Integrantes
 
-* Becerra Montejo Enzo
-* Becerra Montenegro Alessandro
-* Huaman Reyes Santiago Benjamin
-* Martinez Cruz Carlos Wilmer
-* Wong Diaz Fernando Jacob
-
-
+- **Alessandro Becerra Montrengro**
+- **Enzo Giovanny Becerra Montejo**
+- **Santiago Benjamin Huamán Reyes**
+- **Carlos Wilmer Martinez Cruz**
+- **Fernando Jacob Wong Diaz**
