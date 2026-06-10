@@ -28,43 +28,6 @@ public class PedidoRepositoryImpl implements PedidoRepository {
         return pedidos;
     }
 
-    /*
-    @Override
-    public List<Pedido> listar() {
-
-        if (pedidos.isEmpty()) {
-            return pedidos;
-        }
-
-        System.out.println("\n=========================================================================");
-        System.out.printf("| %-10s | %-15s | %-15s | %-15s |%n",
-                "CODIGO",
-                "PRODUCTOS",
-                "TOTAL",
-                "ESTADO");
-
-        System.out.println("=========================================================================");
-
-        for (Pedido pedido : pedidos) {
-
-            int totalProductos = 0;
-
-            for (ItemCarrito item : pedido.getItems()) {
-                totalProductos += item.getCantidad();
-            }
-
-            System.out.printf("| %-10s | %-15d | S/. %-10.2f | %-15s |%n",
-                    pedido.getCodigo(),
-                    totalProductos,
-                    pedido.getTotal(),
-                    pedido.getEstado());
-        }
-
-        System.out.println("=========================================================================");
-
-        return pedidos;
-    } */
-
     @Override
     public Pedido buscarPedidoPorCodigo(String codigo) {
         for (Pedido pedido : pedidos) {

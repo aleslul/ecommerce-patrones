@@ -69,15 +69,6 @@ public class Main {
                 )
         );
 
-        usuarioService.registrarUsuario(
-                new Usuario(
-                        "aleslul",
-                        "1234",
-                        UsuarioRoles.CLIENTE
-                )
-        );
-
-
         LoginMenu loginMenu =
                 new LoginMenu(
                         scanner,

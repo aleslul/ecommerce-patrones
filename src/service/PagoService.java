@@ -15,15 +15,12 @@ import patrones.factory.FactoryPago;
 import java.util.Scanner;
 
 public class PagoService {
-
-    // ¡Adiós PagoRepository! Ya no lo necesitamos.
     private Scanner scanner;
 
     public PagoService() {
         this.scanner = new Scanner(System.in);
     }
 
-    // Cambiamos "void" por "MetodoPago" para poder pasarlo a la factura
     public MetodoPago procesarCompra(Pedido pedido) {
         System.out.println("=== INICIANDO PROCESO DE PAGO ===");
 
@@ -101,6 +98,6 @@ public class PagoService {
             return pago;
         }
 
-        return null; // Si algo falló o se canceló, retorna null
+        return null;
     }
 }

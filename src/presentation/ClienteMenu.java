@@ -299,7 +299,6 @@ public class ClienteMenu {
         pedidoService.mostrarDetallePedido(codigo);
     }
 
-    //TODO: Actualizar esto despues con patrones builder
     private void generarPedido() {
         Pedido pedido = pedidoService.crearPedido(carritoService.obtenerCarrito());
 

@@ -16,7 +16,6 @@ public class PedidoProxy implements PedidoManager{
         this.pedidoService = pedidoServiceReal;
     }
 
-    //TODO: ARREGLAR ESTO
     @Override
     public List<Pedido> listarPedidos() {
         Usuario usuarioActual = SesionActual.getInstance().getUsuario();
